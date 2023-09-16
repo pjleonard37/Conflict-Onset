@@ -18,6 +18,7 @@ body {
 .map-overlay {
     font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
     position: absolute;
+    min-width: 200px;
     width: 25%;
     top: 0;
     left: 0;
@@ -51,4 +52,32 @@ body {
     position: relative;
     margin: 0;
     cursor: ew-resize;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.button {
+    width: 45%;
+    box-sizing: border-box;
+    text-align: center;
+    border: 2px solid #000;
+}
+
+.button:active,
+.button.selected {
+    background-color: red;
+    color: #FFF;
+}
+
+.button:hover {
+    background-color: lightgray;
+    color: #FFF;
+}
+
+.label {
+    font: 1.5em 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    font-weight: bold;
 }

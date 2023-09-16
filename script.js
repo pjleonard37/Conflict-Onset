@@ -3,7 +3,6 @@ mapboxgl.accessToken =
 
 const map = new mapboxgl.Map({
     container: "map",
-    // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
     style: "mapbox://styles/pjleonard37/clmcfrc8f038k01ns7j4r8ttu",
     center: [0, 0],
     zoom: 1
@@ -76,34 +75,41 @@ const years = [
 ];
 
 map.on('load', () => {
-
-    function filterBy(yearIndex) {
-        const filters = ['==', ['get', 'year'], years[yearIndex]];
-        map.setFilter('location-of-armed-conflict-onset', filters);
-
-        // Set the label to the year
-        document.getElementById('year').textContent = years[yearIndex];
-    }
-
-    filterBy(0);
-
-    document.getElementById('slider').addEventListener('change', (e) => {
-        console.log(e.target.value)
-        const year = parseInt(e.target.value, 10);
-        filterBy(e.target.value);
-    });
-
+    var isIncrementing = false;
+    var yearIndex = -1;
     const interval = 1000;
+    const sliderInterval = setInterval(advanceYear, interval);
+    const buttons = document.querySelectorAll('.button');
 
-    function advanceSlider() {
-        if (slider.value >= 62) {
-            slider.value = 0;
+    // Advance year if appropriate
+    function advanceYear() {
+        if (isIncrementing == true) {
+            if (yearIndex >= 62) {
+                yearIndex = 0;
+            }
+            yearIndex += 1;
+            const filters = ['==', ['get', 'year'], years[yearIndex]];
+
+            // Filter the icons in the layer to only those from the specified year 
+            map.setFilter('location-of-armed-conflict-onset', filters);
+            document.getElementById('year').textContent = years[yearIndex];
+        } else {
+            map.setFilter('location-of-armed-conflict-onset', null);
         }
-        slider.value = parseInt(slider.value) + parseInt(slider.step);
-        slider.dispatchEvent(new Event('change'));
     }
 
-    const sliderInterval = setInterval(advanceSlider, interval);
+    buttons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            // Remove 'selected' class from all buttons
+            buttons.forEach(function (btn) {
+                btn.classList.remove('selected');
+            });
+
+            // Add 'selected' class to the clicked button
+            this.classList.add('selected');
+            isIncrementing = !isIncrementing;
+        });
+    });
 
     // Spin the globe
 
@@ -167,4 +173,18 @@ map.on('load', () => {
     });
 
     spinGlobe();
+});
+
+// Add popups 
+map.on('click', 'location-of-armed-conflict-onset', (e) => {
+    const coordinates = e.features[0].geometry.coordinates.slice();
+    const properties = e.features[0].properties;
+    const description = '<div class="label">' + properties.sideb + ' vs. ' + properties.sidea + '</div><div>Onset: ' + e.features[0].properties.startdate + '</div> '
+    console.log(e.features[0]);
+
+
+    new mapboxgl.Popup()
+        .setLngLat(coordinates)
+        .setHTML(description)
+        .addTo(map);
 });
