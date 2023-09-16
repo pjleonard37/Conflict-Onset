@@ -25,6 +25,22 @@ body {
     padding: 10px;
 }
 
+@media (min-width: 768px) {
+    .map-overlay {
+        width: 35%;
+        font-size: 20px;
+    }
+
+    .map-overlay h2 {
+        font-size: 24px;
+    }
+
+    .buttons,
+    .button {
+        padding: 10px;
+    }
+}
+
 .map-overlay .map-overlay-inner {
     background-color: #fff;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
